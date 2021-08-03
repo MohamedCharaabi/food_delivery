@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_flutter/pages/Home.dart';
 // import 'package:flutter_login_signup/src/signup.dart';
 import 'package:food_delivery_flutter/pages/auth/signup1.dart';
+import 'package:food_delivery_flutter/pages/home/home_template.dart';
 import 'package:food_delivery_flutter/pages/widgets/bezierContainer.dart';
 import 'package:food_delivery_flutter/services/firebase_services.dart';
 // import 'package:google_fonts/google_fonts.dart';
@@ -67,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
         if (login == true) {
           Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => Home()),
+              MaterialPageRoute(builder: (context) => HomeTemplate()),
               (route) => false);
         }
       },

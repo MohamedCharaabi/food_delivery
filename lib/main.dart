@@ -7,6 +7,7 @@ import 'package:food_delivery_flutter/pages/Home.dart';
 import 'package:food_delivery_flutter/pages/auth/login1.dart';
 import 'package:food_delivery_flutter/pages/auth/signup1.dart';
 import 'package:food_delivery_flutter/pages/authDialog.dart';
+import 'package:food_delivery_flutter/pages/home/home_template.dart';
 import 'package:food_delivery_flutter/services/firebase_services.dart';
 
 Future<void> main() async {
@@ -20,7 +21,7 @@ Future<void> main() async {
   log('email verif ==> $_emailVerification');
   // bool l = signInWithEmailPassword(email, password)
 
-  Widget child = FirebaseService().isLoggedIn() ? Home() : SignUpPage();
+  Widget child = FirebaseService().isLoggedIn() ? HomeTemplate() : SignUpPage();
 
   runApp(MyApp(homePage: child));
 }

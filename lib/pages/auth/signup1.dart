@@ -7,6 +7,7 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:food_delivery_flutter/pages/Home.dart';
 
 import 'package:food_delivery_flutter/pages/Signin.dart';
+import 'package:food_delivery_flutter/pages/home/home_template.dart';
 import 'package:food_delivery_flutter/pages/widgets/bezierContainer.dart';
 import 'package:food_delivery_flutter/services/firebase_services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -270,7 +271,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     if (_googleLogin == true) {
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => Home()),
+                          MaterialPageRoute(
+                              builder: (context) => HomeTemplate()),
                           (route) => false);
                     }
                   },
@@ -284,7 +286,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     if (_facebookLogin?.status == Status.Success) {
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => Home()),
+                          MaterialPageRoute(
+                              builder: (context) => HomeTemplate()),
                           (route) => false);
                     }
                   },
