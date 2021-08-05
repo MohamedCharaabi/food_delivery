@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_flutter/pages/home/widgets/categories_view.dart';
+import 'package:food_delivery_flutter/pages/home/widgets/menu_view.dart';
 import 'package:food_delivery_flutter/utils/responsive_helper.dart';
+import 'package:http/http.dart' as http;
 // import 'package:flutter_restaurant/helper/responsive_helper.dart';
 // import 'package:flutter_restaurant/view/screens/menu/widget/options_view.dart';
 
@@ -11,6 +14,10 @@ class HomeTemplate extends StatefulWidget {
 }
 
 class _HomeTemplateState extends State<HomeTemplate> {
+  Future loadData() async {
+    //  Response response = await http.get('https://jsonplaceholder.typicode.com/users');
+  }
+
   @override
   Widget build(BuildContext context) {
     final ScrollController _scrollController = ScrollController();
@@ -140,6 +147,26 @@ class _HomeTemplateState extends State<HomeTemplate> {
                       ),
                     ),
                   )),
+                ),
+
+                SliverToBoxAdapter(
+                  child: Center(
+                    child: SizedBox(
+                      width: 1170,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CategorieView(),
+                            MenuView(),
+                            // BannerView(),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+                              child: Text('popular_item'),
+                            ),
+                            // ProductView(productType: ProductType.POPULAR_PRODUCT, scrollController: _scrollController),
+                          ]),
+                    ),
+                  ),
                 ),
               ],
             ),
