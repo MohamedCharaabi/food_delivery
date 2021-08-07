@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_flutter/services/firebase_crud.dart';
+import 'package:food_delivery_flutter/utils/style.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'package:food_delivery_flutter/pages/home/home_template.dart';

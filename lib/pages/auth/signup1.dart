@@ -1,16 +1,16 @@
-import 'dart:developer';
+// import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:food_delivery_flutter/pages/Home.dart';
+// import 'package:food_delivery_flutter/pages/Home.dart';
 
 import 'package:food_delivery_flutter/pages/Signin.dart';
 import 'package:food_delivery_flutter/pages/home/home_template.dart';
-import 'package:food_delivery_flutter/pages/widgets/bezierContainer.dart';
+// import 'package:food_delivery_flutter/pages/widgets/bezierContainer.dart';
 import 'package:food_delivery_flutter/services/firebase_services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 
 import 'login1.dart';
 // / import 'package:flutter_login_signup/src/Widget/bezierContainer.dart';

@@ -3,12 +3,13 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery_flutter/pages/Home.dart';
-import 'package:food_delivery_flutter/pages/auth/login1.dart';
+// import 'package:food_delivery_flutter/pages/Home.dart';
+// import 'package:food_delivery_flutter/pages/auth/login1.dart';
 import 'package:food_delivery_flutter/pages/auth/signup1.dart';
-import 'package:food_delivery_flutter/pages/authDialog.dart';
+// import 'package:food_delivery_flutter/pages/authDialog.dart';
 import 'package:food_delivery_flutter/pages/home/home_template.dart';
 import 'package:food_delivery_flutter/services/firebase_services.dart';
+import 'package:food_delivery_flutter/theme/light_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Admin Panel',
+      theme: light,
       home: homePage,
     );
   }
