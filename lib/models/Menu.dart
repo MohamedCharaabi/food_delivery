@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Menu {
   final String? id;
   final String? name;
@@ -8,6 +6,10 @@ class Menu {
   final String? status;
   final String? price;
   final String? rating;
+  final List? categorie;
+  final String? orderNumber;
+  final String? time;
+  final String? favs;
 
   Menu(
       {this.id,
@@ -16,23 +18,27 @@ class Menu {
       this.desc,
       this.status,
       this.price,
-      this.rating});
+      this.rating,
+      this.categorie,
+      this.orderNumber,
+      this.time,
+      this.favs});
 
   factory Menu.fromMap(Map<String, dynamic> json, String id) {
     print(json.toString());
     return Menu(
-      id: id,
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
-      desc: json['description'] ?? '',
-      status: json['status'] ?? '',
-      price: json['price'] ?? '0.0',
-      rating: json['rating'] ?? '0.0',
-    );
+        id: id,
+        name: json['name'] ?? '',
+        image: json['image'] ?? '',
+        desc: json['description'] ?? '',
+        status: json['status'] ?? '',
+        price: json['price'] ?? '0.0',
+        rating: json['rating'] ?? '0.0',
+        categorie: json['categorie'] ?? [],
+        orderNumber: json['orders'] ?? '',
+        time: json['time'] ?? '',
+        favs: json['favs'] ?? '0');
   }
-
-  //  Menu.fromSnapshot(DocumentSnapshot snapshot)
-  //     : this.fromMap(snapshot.data, snapshot.id);
 
   toJson() {
     return {

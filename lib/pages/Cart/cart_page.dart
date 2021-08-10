@@ -1,5 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:food_delivery_flutter/models/AddOn.dart';
+import 'package:food_delivery_flutter/models/Menu.dart';
+import 'package:food_delivery_flutter/pages/Cart/widgets/delivery_option_button.dart';
+import 'package:food_delivery_flutter/pages/Cart/widgets/food_cart.dart';
+import 'package:food_delivery_flutter/pages/Cart/widgets/no_data_screen.dart';
+import 'package:food_delivery_flutter/providers/cart_provider.dart';
+import 'package:food_delivery_flutter/services/firebase_crud.dart';
+import 'package:food_delivery_flutter/utils/style.dart';
+import 'package:provider/provider.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -13,516 +25,424 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xFFFAFAFA),
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Color(0xFF3a3737),
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Center(
-            child: Text(
-              "Item Carts",
-              style: TextStyle(
-                  color: Color(0xFF3a3737),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          brightness: Brightness.light,
-          actions: <Widget>[
-            CartIconWithBadge(),
-          ],
+          title: Text('My Order'),
+          centerTitle: true,
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.all(15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(left: 5),
-                  child: Text(
-                    "Your Food Cart",
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                CartItem(
-                    productName: "Grilled Salmon",
-                    productPrice: "\$96.00",
-                    productImage: "ic_popular_food_1",
-                    productCartQuantity: "2"),
-                SizedBox(
-                  height: 10,
-                ),
-                CartItem(
-                    productName: "Meat vegetable",
-                    productPrice: "\$65.08",
-                    productImage: "ic_popular_food_4",
-                    productCartQuantity: "5"),
-                SizedBox(
-                  height: 10,
-                ),
-                PromoCodeWidget(),
-                SizedBox(
-                  height: 10,
-                ),
-                TotalCalculationWidget(),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 5),
-                  child: Text(
-                    "Payment Method",
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                PaymentMethodWidget(),
-              ],
-            ),
-          ),
-        ));
+        body: Consumer<CartProvider>(builder: (context, cart, chid) {
+          //
+          if (cart.cartItems.isEmpty) {
+            return NoDataScreen(isCart: true);
+          }
+          return Column(children: [
+            Expanded(
+                child: Scrollbar(
+                    child: SingleChildScrollView(
+                        padding: EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+                        physics: BouncingScrollPhysics(),
+                        child: Center(
+                            child: SizedBox(
+                          width: 1170,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Product
+                              ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: cart.cartItems.length,
+                                itemBuilder: (context, index) {
+                                  return CartFood(menu: cart.cartItems[index]);
+                                },
+                              ),
+
+                              SizedBox(height: 15),
+                              FutureBuilder<List<AddOn>>(
+                                  builder: (context, snapshot) {
+                                return SizedBox();
+                              }),
+                              Text(
+                                'Add On',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 10),
+
+                              AddOnsItems(height: height),
+                              SizedBox(height: 15),
+
+                              Text(
+                                'Bill Details',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 10),
+                              BillDetails(billItems: cart.cartItems),
+                              SizedBox(height: 15),
+                              SizedBox(
+                                height: 70,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text('Deliver to work',
+                                            style: TextStyle(fontSize: 18)),
+                                        Text(
+                                          'CHANGE',
+                                          style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              fontSize: 14),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                        width: 200,
+                                        child: Text(
+                                          '201, Dev mall, near iskon cross roads',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Color(0xff8d8d8d)),
+                                          overflow: TextOverflow.ellipsis,
+                                        ))
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xffea4212),
+                                      borderRadius: BorderRadius.circular(11)),
+                                  child: Center(
+                                    child: Text(
+                                      'MAKE ORDER',
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.white),
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        )))))
+          ]);
+        }));
   }
 }
 
-class PaymentMethodWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      width: double.infinity,
-      height: 60,
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: Color(0xFFfae3e2).withOpacity(0.1),
-          spreadRadius: 1,
-          blurRadius: 1,
-          offset: Offset(0, 1),
-        ),
-      ]),
-      child: Card(
-        color: Colors.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(5.0),
-          ),
-        ),
-        child: Container(
-          alignment: Alignment.center,
-          padding: EdgeInsets.only(left: 10, right: 30, top: 10, bottom: 10),
-          child: Row(
-            children: <Widget>[
-              Container(
-                alignment: Alignment.center,
-                child: Image.asset(
-                  "assets/images/backgroundLogin.jpg",
-                  width: 50,
-                  height: 50,
-                ),
-              ),
-              Text(
-                "Credit/Debit Card",
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFF3a3a3b),
-                    fontWeight: FontWeight.w400),
-                textAlign: TextAlign.left,
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class TotalCalculationWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      width: double.infinity,
-      height: 150,
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: Color(0xFFfae3e2).withOpacity(0.1),
-          spreadRadius: 1,
-          blurRadius: 1,
-          offset: Offset(0, 1),
-        ),
-      ]),
-      child: Card(
-        color: Colors.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(5.0),
-          ),
-        ),
-        child: Container(
-          alignment: Alignment.center,
-          padding: EdgeInsets.only(left: 25, right: 30, top: 10, bottom: 10),
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Grilled Salmon",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  ),
-                  Text(
-                    "\$192",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Meat vegetable",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  ),
-                  Text(
-                    "\$102",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Total",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.left,
-                  ),
-                  Text(
-                    "\$292",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.left,
-                  )
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PromoCodeWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        padding: EdgeInsets.only(left: 3, right: 3),
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: Color(0xFFfae3e2).withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 1,
-            offset: Offset(0, 1),
-          ),
-        ]),
-        child: TextFormField(
-          decoration: InputDecoration(
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFe6e1e1), width: 1.0),
-              ),
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFFe6e1e1), width: 1.0),
-                  borderRadius: BorderRadius.circular(7)),
-              fillColor: Colors.white,
-              hintText: 'Add Your Promo Code',
-              filled: true,
-              suffixIcon: IconButton(
-                  icon: Icon(
-                    Icons.local_offer,
-                    color: Color(0xFFfd2c2c),
-                  ),
-                  onPressed: () {
-                    debugPrint('222');
-                  })),
-        ),
-      ),
-    );
-  }
-}
-
-class CartItem extends StatelessWidget {
-  String productName;
-  String productPrice;
-  String productImage;
-  String productCartQuantity;
-
-  CartItem({
+class AddOnsItems extends StatefulWidget {
+  const AddOnsItems({
     Key? key,
-    required this.productName,
-    required this.productPrice,
-    required this.productImage,
-    required this.productCartQuantity,
+    required this.height,
   }) : super(key: key);
 
+  final double height;
+
+  @override
+  _AddOnsItemsState createState() => _AddOnsItemsState();
+}
+
+class _AddOnsItemsState extends State<AddOnsItems> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 130,
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: Color(0xFFfae3e2).withOpacity(0.3),
-          spreadRadius: 1,
-          blurRadius: 1,
-          offset: Offset(0, 1),
-        ),
-      ]),
-      child: Card(
-          color: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: const BorderRadius.all(
-              Radius.circular(5.0),
-            ),
-          ),
-          child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 10),
+    return Consumer<CartProvider>(builder: (context, cart, child) {
+      return Container(
+          height: widget.height * 0.2,
+          margin: EdgeInsets.only(right: 5),
+          // color: Colors.amber,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
             child: Row(
-              // mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Center(
-                        child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5.0),
-                      child: Image.asset(
-                        "assets/images/backgroundLogin.jpg",
-                        width: 110,
-                        height: 100,
+                ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: cart.addOnsItems.length,
+                  itemBuilder: (context, index) {
+                    AddOn _addOn = cart.addOnsItems[index];
+                    return InkWell(
+                      onLongPress: () {
+                        showBottomSheet(
+                            elevation: 2.5,
+                            backgroundColor: Colors.red,
+                            context: context,
+                            builder: (context) {
+                              return SizedBox(
+                                height: 70,
+                                child: Center(
+                                  child: MaterialButton(
+                                    // height: ,
+                                    color: Colors.amber,
+                                    child: Text('Remove'),
+                                    onPressed: () {
+                                      context
+                                          .read<CartProvider>()
+                                          .deleteAddOnItem(_addOn);
+                                    },
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                      child: Container(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: CachedNetworkImage(
+                              imageUrl: '${_addOn.image}',
+                              placeholder: (context, url) => Image.asset(
+                                'assets/images/icon-food.jpg',
+                                width: 70,
+                                height: 70,
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                              width: 70,
+                              height: 70,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text('${_addOn.name}'),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text('\$${_addOn.price}')
+                        ],
+                      )),
+                    );
+                  },
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Center(
+                  child: InkWell(
+                    onTap: () {
+                      showSheet();
+                    },
+                    child: DottedBorder(
+                      color: Colors.green,
+                      strokeWidth: 1,
+                      child: Container(
+                        width: widget.height * 0.13,
+                        height: widget.height * 0.13,
+                        padding: const EdgeInsets.all(10),
+                        child: Center(
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.green,
+                          ),
+                        ),
                       ),
-                    )),
+                    ),
                   ),
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Text(
-                          "$productName",
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Color(0xFF3a3a3b),
-                              fontWeight: FontWeight.w400),
-                          textAlign: TextAlign.left,
-                        ),
-                        Text(
-                          "$productPrice",
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Color(0xFF3a3a3b),
-                              fontWeight: FontWeight.w400),
-                          textAlign: TextAlign.left,
-                        ),
-                        // Column(
-                        //   crossAxisAlignment: CrossAxisAlignment.start,
-                        //   children: <Widget>[
-                        //     Container(
-                        //       child:
-                        //     ),
-                        //     SizedBox(
-                        //       height: 5,
-                        //     ),
-                        //     Container(
-                        //       child: Text(
-                        //         "$productPrice",
-                        //         style: TextStyle(
-                        //             fontSize: 18,
-                        //             color: Color(0xFF3a3a3b),
-                        //             fontWeight: FontWeight.w400),
-                        //         textAlign: TextAlign.left,
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                        // SizedBox(
-                        //   width: 10,
-                        // ),
-                        // Container(
-                        //   alignment: Alignment.centerRight,
-                        //   child: Image.asset(
-                        //     "assets/images/backgrroundLogin.jpg",
-                        //     width: 25,
-                        //     height: 25,
-                        //   ),
-                        // )
-                      ],
-                    ),
-                  ],
-                ),
-                Container(
-                  // margin: EdgeInsets.only(left: 5),
-                  alignment: Alignment.centerRight,
-                  child: AddToCartMenu(2),
-                )
               ],
             ),
-          )),
-    );
+          ));
+    });
   }
-}
 
-class CartIconWithBadge extends StatelessWidget {
-  int counter = 3;
+  Future showSheet() => showSlidingBottomSheet(context, builder: (context) {
+        return SlidingSheetDialog(
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [0.4, 0.7, 1.0],
+            positioning: SnapPositioning.relativeToAvailableSpace,
+          ),
+          builder: (BuildContext context, SheetState state) =>
+              buildSheet(context, state),
+        );
+      });
 
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        IconButton(
-            icon: Icon(
-              Icons.business_center,
-              color: Color(0xFF3a3737),
-            ),
-            onPressed: () {}),
-        counter != 0
-            ? Positioned(
-                right: 11,
-                top: 11,
-                child: Container(
-                  padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  constraints: BoxConstraints(
-                    minWidth: 14,
-                    minHeight: 14,
-                  ),
-                  child: Text(
-                    '$counter',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 8,
+  Widget buildSheet(context, state) => Material(
+      child: FutureBuilder<List<AddOn>>(
+          future: FirebaseCrud().fetchAddOns(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return ListView.builder(
+                shrinkWrap: true,
+                primary: false,
+                padding: EdgeInsets.all(15),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  AddOn addOn = snapshot.data![index];
+                  return InkWell(
+                    onTap: () {
+                      context.read<CartProvider>().addAddOnItem(addOn);
+                    },
+                    child: Container(
+                      height: 90,
+                      margin: EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 2.0,
+                              spreadRadius: 0.0,
+                              offset: Offset(
+                                  2.0, 2.0), // shadow direction: bottom right
+                            )
+                          ],
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Row(
+                        children: <Widget>[
+                          Flexible(
+                            flex: 3,
+                            child: Container(
+                                width: double.maxFinite,
+                                margin: EdgeInsets.only(right: 2),
+                                child: Row(
+                                  children: <Widget>[
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: CachedNetworkImage(
+                                        imageUrl: '${addOn.image}',
+                                        placeholder: (context, url) =>
+                                            Image.asset(
+                                          'assets/images/icon-food.jpg',
+                                          width: 70,
+                                          height: 70,
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
+                                        width: 70,
+                                        height: 70,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: <Widget>[
+                                        Text(
+                                          addOn.name!.length > 15
+                                              ? addOn.name!.substring(0, 15) +
+                                                  '...'
+                                              : '${addOn.name}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          '\$ ${addOn.price}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                )),
+                          ),
+                        ],
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            : Container()
-      ],
-    );
-  }
+                  );
+                });
+          }));
 }
 
-class AddToCartMenu extends StatefulWidget {
-  int productCounter;
-
-  AddToCartMenu(this.productCounter);
-
-  @override
-  _AddToCartMenuState createState() => _AddToCartMenuState();
-}
-
-class _AddToCartMenuState extends State<AddToCartMenu> {
-  int _count = 1;
+class BillDetails extends StatelessWidget {
+  const BillDetails({Key? key, required this.billItems}) : super(key: key);
+  final List<Menu> billItems;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _count -= 1;
-              });
-            },
-            icon: Icon(Icons.remove),
-            color: Colors.black,
-            iconSize: 18,
-          ),
-          Text(
-            '$_count',
-            style: new TextStyle(
-                fontSize: 12.0,
-                color: Colors.white,
-                fontWeight: FontWeight.w300),
-          ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _count += 1;
-              });
-            },
-            icon: Icon(Icons.add),
-            color: Color(0xFFfd2c2c),
-            iconSize: 18,
-          ),
-        ],
-      ),
+    return Consumer<CartProvider>(
+      builder: (context, cart, child) {
+        return Container(
+            height: 280,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Item Total',
+                        style:
+                            TextStyle(fontSize: 16, color: Color(0xff8d8d8d)),
+                      ),
+                      Text('${cart.itemTotal.toStringAsFixed(2)}',
+                          style: TextStyle(fontSize: 15))
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('Restaurant Charges',
+                          style: TextStyle(
+                              fontSize: 16, color: Color(0xff8d8d8d))),
+                      Text('\$${cart.restaurantCharges.toStringAsFixed(2)}',
+                          style: TextStyle(fontSize: 15))
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('Delivery Fee',
+                          style: TextStyle(
+                              fontSize: 16, color: Color(0xff8d8d8d))),
+                      Text('\$${cart.delivery_fee.toStringAsFixed(2)}',
+                          style: TextStyle(fontSize: 15))
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('Copon',
+                          style: TextStyle(
+                              fontSize: 16, color: Color(0xff8d8d8d))),
+                      Text('-\$${cart.couponsRemize().toStringAsFixed(2)}',
+                          style: TextStyle(fontSize: 15))
+                    ],
+                  ),
+                  Center(
+                    child: Container(
+                      // width: 90,
+                      padding: EdgeInsets.all(5),
+                      color: Colors.grey,
+                      height: 1,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('To Pay',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xff000000),
+                          )),
+                      Text('\$${cart.toPay.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xff000000),
+                          ))
+                    ],
+                  ),
+                ]));
+      },
     );
   }
 }

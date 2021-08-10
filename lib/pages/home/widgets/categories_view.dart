@@ -1,7 +1,10 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_flutter/models/Categorie.dart';
+import 'package:food_delivery_flutter/pages/categorie/Categorie_page.dart';
 import 'package:food_delivery_flutter/services/firebase_crud.dart';
 import 'package:food_delivery_flutter/utils/style.dart';
 import 'package:shimmer/shimmer.dart';
@@ -34,8 +37,8 @@ class _CategorieViewState extends State<CategorieView> {
       ),
       SizedBox(
         height: 80,
-        child: FutureBuilder<QuerySnapshot>(
-          future: FirebaseCrud().readCategories(),
+        child: FutureBuilder<List<Categorie>>(
+          future: FirebaseCrud().fetchCategories(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Center(
@@ -43,36 +46,48 @@ class _CategorieViewState extends State<CategorieView> {
               );
             } else
               return ListView.builder(
-                itemCount: snapshot.data!.docs.length,
+                itemCount: snapshot.data!.length,
                 padding: EdgeInsets.only(left: Dimensions.PADDING_SIZE_SMALL),
                 physics: BouncingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
-                  var categorie = snapshot.data!.docs[index];
+                  var categorie = snapshot.data![index];
                   return Padding(
                     padding:
                         EdgeInsets.only(right: Dimensions.PADDING_SIZE_SMALL),
                     child: InkWell(
-                      // onTap: () => Navigator.pushNamed(
-                      //     context,
-                      //     Routes.getCategoryRoute(
-                      //       categories[index].id,
-                      //       categories[index].image,
-                      //       categories[index].name
-                      //           .replaceAll(' ', '-'),
-                      //     )), // arguments:  categories[index].name),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CategoriePage(
+                                    selectedCategorie: categorie)));
+                      },
                       child: Column(children: [
                         ClipOval(
-                          child: FadeInImage.assetNetwork(
-                            placeholder:
-                                'https://icon-library.com/images/icon-for-food/icon-for-food-9.jpg',
-                            image: categorie['image'],
-                            width: 65, height: 65, fit: BoxFit.cover,
-                            // width: 100, height: 100, fit: BoxFit.cover,
+                          child: CachedNetworkImage(
+                            imageUrl: categorie.image!,
+                            placeholder: (context, url) => Image.asset(
+                              'assets/images/icon-food.jpg',
+                              width: 65,
+                              height: 65,
+                            ),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
+                            width: 65,
+                            height: 65,
+                            fit: BoxFit.cover,
                           ),
+                          // child: FadeInImage.assetNetwork(
+                          //   placeholder:
+                          //       'https://icon-library.com/images/icon-for-food/icon-for-food-9.jpg',
+                          //   image: categorie['image'],
+                          //   width: 65, height: 65, fit: BoxFit.cover,
+                          //   width: 100, height: 100, fit: BoxFit.cover,
+                          // ),
                         ),
                         Text(
-                          categorie['name'],
+                          categorie.name!,
                           style: rubikMedium.copyWith(
                               fontSize: Dimensions.FONT_SIZE_SMALL),
                           maxLines: 1,

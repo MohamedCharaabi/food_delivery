@@ -17,11 +17,14 @@
 // // import 'package:flutter_restaurant/view/base/custom_button.dart';
 // // import 'package:flutter_restaurant/view/base/rating_bar.dart';
 // import 'package:flutter/material.dart';
+// import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 // import 'package:food_delivery_flutter/models/CartModel.dart';
 // import 'package:food_delivery_flutter/models/Menu.dart';
 // import 'package:food_delivery_flutter/models/Product.dart';
 // import 'package:food_delivery_flutter/pages/home/home_template.dart';
+// import 'package:food_delivery_flutter/utils/images.dart';
 // import 'package:food_delivery_flutter/utils/responsive_helper.dart';
+// import 'package:food_delivery_flutter/utils/style.dart';
 // import 'package:provider/provider.dart';
 // import 'package:intl/intl.dart';
 
@@ -42,9 +45,9 @@
 //   Widget build(BuildContext context) {
 //     final size = MediaQuery.of(context).size;
 //     bool fromCart = cart != null;
-//     Provider.of<ProductProvider>(context, listen: false)
-//         .initData(product, cart);
-//     Variation _variation = Variation();
+//     // Provider.of<ProductProvider>(context, listen: false)
+//     //     .initData(product, cart);
+//     // Variation _variation = Variation();
 
 //     return Stack(
 //       children: [
@@ -58,110 +61,110 @@
 //           ),
 //           child: Consumer<ProductProvider>(
 //             builder: (context, productProvider, child) {
-//               double _startingPrice;
-//               double _endingPrice;
-//               if (product.choiceOptions.length != 0) {
-//                 List<double> _priceList = [];
-//                 product.variations
-//                     .forEach((variation) => _priceList.add(variation.price));
-//                 _priceList.sort((a, b) => a.compareTo(b));
-//                 _startingPrice = _priceList[0];
-//                 if (_priceList[0] < _priceList[_priceList.length - 1]) {
-//                   _endingPrice = _priceList[_priceList.length - 1];
-//                 }
-//               } else {
-//                 _startingPrice = product.price;
-//               }
+//               // double _startingPrice;
+//               // double _endingPrice;
+//               // if (product.choiceOptions.length != 0) {
+//               //   List<double> _priceList = [];
+//               //   product.variations
+//               //       .forEach((variation) => _priceList.add(variation.price));
+//               //   _priceList.sort((a, b) => a.compareTo(b));
+//               //   _startingPrice = _priceList[0];
+//               //   if (_priceList[0] < _priceList[_priceList.length - 1]) {
+//               //     _endingPrice = _priceList[_priceList.length - 1];
+//               //   }
+//               // } else {
+//               //   _startingPrice = product.price;
+//               // }
 
-//               List<String> _variationList = [];
-//               for (int index = 0;
-//                   index < product.choiceOptions.length;
-//                   index++) {
-//                 _variationList.add(product.choiceOptions[index]
-//                     .options[productProvider.variationIndex[index]]
-//                     .replaceAll(' ', ''));
-//               }
-//               String variationType = '';
-//               bool isFirst = true;
-//               _variationList.forEach((variation) {
-//                 if (isFirst) {
-//                   variationType = '$variationType$variation';
-//                   isFirst = false;
-//                 } else {
-//                   variationType = '$variationType-$variation';
-//                 }
-//               });
+//               // List<String> _variationList = [];
+//               // for (int index = 0;
+//               //     index < product.choiceOptions.length;
+//               //     index++) {
+//               //   _variationList.add(product.choiceOptions[index]
+//               //       .options[productProvider.variationIndex[index]]
+//               //       .replaceAll(' ', ''));
+//               // }
+//               // String variationType = '';
+//               // bool isFirst = true;
+//               // _variationList.forEach((variation) {
+//               //   if (isFirst) {
+//               //     variationType = '$variationType$variation';
+//               //     isFirst = false;
+//               //   } else {
+//               //     variationType = '$variationType-$variation';
+//               //   }
+//               // });
 
-//               double price = product.price;
-//               for (Variation variation in product.variations) {
-//                 if (variation.type == variationType) {
-//                   price = variation.price;
-//                   _variation = variation;
-//                   break;
-//                 }
-//               }
-//               double priceWithDiscount = PriceConverter.convertWithDiscount(
-//                   context, price, product.discount, product.discountType);
-//               double priceWithQuantity =
-//                   priceWithDiscount * productProvider.quantity;
-//               double addonsCost = 0;
-//               List<AddOn> _addOnIdList = [];
-//               for (int index = 0; index < product.addOns.length; index++) {
-//                 if (productProvider.addOnActiveList[index]) {
-//                   addonsCost = addonsCost +
-//                       (product.addOns[index].price *
-//                           productProvider.addOnQtyList[index]);
-//                   _addOnIdList.add(AddOn(
-//                       id: product.addOns[index].id,
-//                       quantity: productProvider.addOnQtyList[index]));
-//                 }
-//               }
-//               double priceWithAddons = priceWithQuantity + addonsCost;
+//               // double price = product.price;
+//               // for (Variation variation in product.variations) {
+//               //   if (variation.type == variationType) {
+//               //     price = variation.price;
+//               //     _variation = variation;
+//               //     break;
+//               //   }
+//               // }
+//               // double priceWithDiscount = PriceConverter.convertWithDiscount(
+//               //     context, price, product.discount, product.discountType);
+//               // double priceWithQuantity =
+//               //     priceWithDiscount * productProvider.quantity;
+//               // double addonsCost = 0;
+//               // List<AddOn> _addOnIdList = [];
+//               // for (int index = 0; index < product.addOns.length; index++) {
+//               //   if (productProvider.addOnActiveList[index]) {
+//               //     addonsCost = addonsCost +
+//               //         (product.addOns[index].price *
+//               //             productProvider.addOnQtyList[index]);
+//               //     _addOnIdList.add(AddOn(
+//               //         id: product.addOns[index].id,
+//               //         quantity: productProvider.addOnQtyList[index]));
+//               //   }
+//               // }
+//               // double priceWithAddons = priceWithQuantity + addonsCost;
 
-//               DateTime _currentTime =
-//                   Provider.of<SplashProvider>(context, listen: false)
-//                       .currentTime;
-//               DateTime _start =
-//                   DateFormat('hh:mm:ss').parse(product.availableTimeStarts);
-//               DateTime _end =
-//                   DateFormat('hh:mm:ss').parse(product.availableTimeEnds);
-//               DateTime _startTime = DateTime(
-//                   _currentTime.year,
-//                   _currentTime.month,
-//                   _currentTime.day,
-//                   _start.hour,
-//                   _start.minute,
-//                   _start.second);
-//               DateTime _endTime = DateTime(
-//                   _currentTime.year,
-//                   _currentTime.month,
-//                   _currentTime.day,
-//                   _end.hour,
-//                   _end.minute,
-//                   _end.second);
-//               if (_endTime.isBefore(_startTime)) {
-//                 _endTime = _endTime.add(Duration(days: 1));
-//               }
-//               bool _isAvailable = _currentTime.isAfter(_startTime) &&
-//                   _currentTime.isBefore(_endTime);
+//               // DateTime _currentTime =
+//               //     Provider.of<SplashProvider>(context, listen: false)
+//               //         .currentTime;
+//               // DateTime _start =
+//               //     DateFormat('hh:mm:ss').parse(product.availableTimeStarts);
+//               // DateTime _end =
+//               //     DateFormat('hh:mm:ss').parse(product.availableTimeEnds);
+//               // DateTime _startTime = DateTime(
+//               //     _currentTime.year,
+//               //     _currentTime.month,
+//               //     _currentTime.day,
+//               //     _start.hour,
+//               //     _start.minute,
+//               //     _start.second);
+//               // DateTime _endTime = DateTime(
+//               //     _currentTime.year,
+//               //     _currentTime.month,
+//               //     _currentTime.day,
+//               //     _end.hour,
+//               //     _end.minute,
+//               //     _end.second);
+//               // if (_endTime.isBefore(_startTime)) {
+//               //   _endTime = _endTime.add(Duration(days: 1));
+//               // }
+//               // bool _isAvailable = _currentTime.isAfter(_startTime) &&
+//               //     _currentTime.isBefore(_endTime);
 
-//               CartModel _cartModel = CartModel(
-//                 price,
-//                 priceWithDiscount,
-//                 [_variation],
-//                 (price -
-//                     PriceConverter.convertWithDiscount(context, price,
-//                         product.discount, product.discountType)),
-//                 productProvider.quantity,
-//                 price -
-//                     PriceConverter.convertWithDiscount(
-//                         context, price, product.tax, product.taxType),
-//                 _addOnIdList,
-//                 product,
-//               );
-//               bool isExistInCart =
-//                   Provider.of<CartProvider>(context, listen: false)
-//                       .isExistInCart(_cartModel, fromCart, cartIndex);
+//               // CartModel _cartModel = CartModel(
+//               //   price,
+//               //   priceWithDiscount,
+//               //   [_variation],
+//               //   (price -
+//               //       PriceConverter.convertWithDiscount(context, price,
+//               //           product.discount, product.discountType)),
+//               //   productProvider.quantity,
+//               //   price -
+//               //       PriceConverter.convertWithDiscount(
+//               //           context, price, product.tax, product.taxType),
+//               //   _addOnIdList,
+//               //   product,
+//               // );
+//               // bool isExistInCart =
+//               //     Provider.of<CartProvider>(context, listen: false)
+//               //         .isExistInCart(_cartModel, fromCart, cartIndex);
 
 //               return SingleChildScrollView(
 //                 child: Column(

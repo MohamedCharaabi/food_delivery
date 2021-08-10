@@ -22,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
 
+  bool loading = false;
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -63,8 +64,14 @@ class _LoginPageState extends State<LoginPage> {
   Widget _submitButton() {
     return InkWell(
       onTap: () async {
+        setState(() {
+          loading = true;
+        });
         bool? login = await FirebaseService().signInWithEmailPassword(
             _emailController.text.trim(), _passwordController.text.trim());
+        setState(() {
+          loading = false;
+        });
         if (login == true) {
           Navigator.pushAndRemoveUntil(
               context,
@@ -277,7 +284,11 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 50),
               _emailPasswordWidget(),
               SizedBox(height: 20),
-              _submitButton(),
+              !loading
+                  ? _submitButton()
+                  : Center(
+                      child: CircularProgressIndicator(),
+                    ),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 alignment: Alignment.centerRight,

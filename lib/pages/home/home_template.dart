@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_flutter/pages/Cart/cart_page.dart';
 import 'package:food_delivery_flutter/pages/favorite/favorite_page.dart';
 import 'package:food_delivery_flutter/pages/home/home_page.dart';
+import 'package:food_delivery_flutter/pages/order/order_page.dart';
 // import 'package:food_delivery_flutter/pages/home/widgets/categories_view.dart';
 // import 'package:food_delivery_flutter/pages/home/widgets/menu_view.dart';
 // import 'package:food_delivery_flutter/pages/order/order_page.dart';
@@ -14,8 +16,8 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 // import 'package:flutter_restaurant/view/screens/menu/widget/options_view.dart';
 
 class HomeTemplate extends StatefulWidget {
-  const HomeTemplate({Key? key}) : super(key: key);
-
+  const HomeTemplate({Key? key, this.indexPage}) : super(key: key);
+  final int? indexPage;
   @override
   _HomeTemplateState createState() => _HomeTemplateState();
 }
@@ -28,7 +30,6 @@ class _HomeTemplateState extends State<HomeTemplate> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     CartPage(),
-    // OrderPage(),
     FavoritePage(),
     ProfilePage(),
   ];
@@ -42,7 +43,7 @@ class _HomeTemplateState extends State<HomeTemplate> {
           //  ResponsiveHelper.isTab(context) ? Drawer(child: OptionsView(onTap: null)) :
           SizedBox(),
       appBar: null,
-      body: _widgetOptions[_selectedIndex],
+      body: _widgetOptions[widget.indexPage ?? _selectedIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.grey[100]!,
@@ -64,7 +65,7 @@ class _HomeTemplateState extends State<HomeTemplate> {
 
             /// Likes
             SalomonBottomBarItem(
-              icon: Icon(Icons.shopping_bag),
+              icon: Icon(FontAwesomeIcons.shoppingBag),
               title: Text("Cart"),
               selectedColor: Colors.pink,
             ),

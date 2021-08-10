@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -59,19 +60,16 @@ class _MenuViewState extends State<MenuView> {
                         //     context: context,
                         //     isScrollControlled: true,
                         //     backgroundColor: Colors.transparent,
-                        //     builder: (con) => CustomBottomSheet()
-                        //     // CartBottomSheet(
-                        //     //       product: menu,
-                        //     //       fromSetMenu: true,
-                        //     //       callback: (CartModel cartModel) {
-                        //     //         ScaffoldMessenger.of(context).showSnackBar(
-                        //     //             SnackBar(
-                        //     //                 content: Text(
-                        //     //                     'added_to_cart'),
-                        //     //                 backgroundColor: Colors.green));
-                        //     //       },
-                        //     //     )
-                        //     );
+                        //     builder: (con) => CustomBottomSheet(
+                        //         // product: setMenu.setMenuList[index],
+                        //         // fromSetMenu: true,
+                        //         // callback: (CartModel cartModel) {
+                        //         //   ScaffoldMessenger.of(context).showSnackBar(
+                        //         //       SnackBar(
+                        //         //           content: Text('added_to_cart'),
+                        //         //           backgroundColor: Colors.green));
+                        //         // },
+                        //         ));
                       },
                       child: Container(
                         height: 220,
@@ -95,14 +93,25 @@ class _MenuViewState extends State<MenuView> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.vertical(
                                         top: Radius.circular(10)),
-                                    child: FadeInImage.assetNetwork(
-                                      placeholder:
-                                          'https://icon-library.com/images/icon-for-food/icon-for-food-9.jpg',
-                                      image: menu.image!,
-                                      height: 110,
-                                      width: 170,
-                                      fit: BoxFit.cover,
+                                    child: CachedNetworkImage(
+                                      imageUrl: menu.image!,
+                                      placeholder: (context, url) =>
+                                          Image.asset(
+                                        'assets/images/icon-food.jpg',
+                                        height: 110,
+                                        width: 170,
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error),
                                     ),
+                                    // child: FadeInImage.assetNetwork(
+                                    //   placeholder:
+                                    //       'https://icon-library.com/images/icon-for-food/icon-for-food-9.jpg',
+                                    //   image: menu.image!,
+                                    //   height: 110,
+                                    //   width: 170,
+                                    //   fit: BoxFit.cover,
+                                    // ),
                                   ),
                                   menu.status! == 'disponible'
                                       ? SizedBox()

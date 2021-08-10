@@ -1,16 +1,38 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Categorie {
   final String? id;
   final String? name;
-  final String? dep_name;
+  final String? image;
 
-  Categorie({this.id, this.name, this.dep_name});
+  final String? status;
 
-  factory Categorie.fromJson(Map<String, dynamic> json) {
+  Categorie({
+    this.id,
+    this.name,
+    this.image,
+    this.status,
+  });
+
+  factory Categorie.fromMap(Map<String, dynamic> json, String id) {
     print(json.toString());
     return Categorie(
-      id: json['_id'],
-      name: json['name'],
-      dep_name: json['dep_name'],
+      id: id,
+      name: json['name'] ?? '',
+      image: json['image'] ?? '',
+      status: json['status'] ?? '',
     );
+  }
+
+  //  Categorie.fromSnapshot(DocumentSnapshot snapshot)
+  //     : this.fromMap(snapshot.data, snapshot.id);
+
+  toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'image': image,
+      'status': status,
+    };
   }
 }
