@@ -41,3 +41,12 @@ class ResponsiveHelper {
     }
   }
 }
+
+class ResponsiveMediaquery {
+  BuildContext context;
+
+  ResponsiveMediaquery({required this.context});
+
+  get height => MediaQuery.of(context).size.height;
+  get width => MediaQuery.of(context).size.width;
+}

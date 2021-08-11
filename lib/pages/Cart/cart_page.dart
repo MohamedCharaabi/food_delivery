@@ -7,6 +7,7 @@ import 'package:food_delivery_flutter/models/Menu.dart';
 import 'package:food_delivery_flutter/pages/Cart/widgets/delivery_option_button.dart';
 import 'package:food_delivery_flutter/pages/Cart/widgets/food_cart.dart';
 import 'package:food_delivery_flutter/pages/Cart/widgets/no_data_screen.dart';
+import 'package:food_delivery_flutter/pages/Cart/widgets/track_order.dart';
 import 'package:food_delivery_flutter/providers/cart_provider.dart';
 import 'package:food_delivery_flutter/services/firebase_crud.dart';
 import 'package:food_delivery_flutter/utils/style.dart';
@@ -30,6 +31,14 @@ class _CartPageState extends State<CartPage> {
         appBar: AppBar(
           title: Text('My Order'),
           centerTitle: true,
+          actions: [
+            IconButton(
+                icon: Icon(Icons.account_balance, color: Colors.white),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => TrackOrder()));
+                }),
+          ],
         ),
         body: Consumer<CartProvider>(builder: (context, cart, chid) {
           //

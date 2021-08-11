@@ -3,10 +3,15 @@
 
 
   <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
    <application
         android:label="food_delivery_flutter"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"  >
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyA_-8vmoJI6HiYsWKOVyc9llTT5g3X_Kjg"/>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId" 
         android:value="@string/facebook_app_id"/>
@@ -60,5 +65,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+             
     </application>
 </manifest>

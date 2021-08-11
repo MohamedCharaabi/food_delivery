@@ -127,6 +127,16 @@ class FirebaseCrud {
         .then((value) => true)
         .catchError((err) => false);
   }
+
+  Future<UserModel> getUser() async {
+    String id = FirebaseAuth.instance.currentUser!.uid;
+    final Api _api = Api('users');
+    var result = await _api.getDocumentById(id);
+    UserModel user =
+        UserModel.fromMap(result.data() as Map<String, dynamic>, id);
+
+    return user;
+  }
 }
 
 class Api {

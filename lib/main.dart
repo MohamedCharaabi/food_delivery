@@ -10,6 +10,7 @@ import 'package:food_delivery_flutter/pages/auth/signup1.dart';
 import 'package:food_delivery_flutter/pages/home/home_template.dart';
 import 'package:food_delivery_flutter/providers/cart_provider.dart';
 import 'package:food_delivery_flutter/providers/favorities_provider.dart';
+import 'package:food_delivery_flutter/providers/user_provider.dart';
 import 'package:food_delivery_flutter/services/firebase_services.dart';
 import 'package:food_delivery_flutter/theme/light_theme.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,7 @@ Future<void> main() async {
     MultiProvider(providers: [
       ChangeNotifierProvider(create: (context) => CartProvider()),
       ChangeNotifierProvider(create: (context) => FavoritiesProvider()),
+      ChangeNotifierProvider(create: (context) => UserProvider()),
     ], child: MyApp(homePage: child)),
   );
 }
